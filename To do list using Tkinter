@@ -1,0 +1,74 @@
+import tkinter as tk
+import os
+
+def add_item():
+    item = entry.get()
+    listbox.insert(tk.END, item)
+    entry.delete(0, tk.END)
+    update_list_count()
+
+def remove_item():
+    selected = listbox.curselection()
+    if selected:
+        listbox.delete(selected[0])
+        update_list_count()
+
+def clear_list():
+    listbox.delete(0, tk.END)
+    update_list_count()
+
+def update_list_count():
+    count = listbox.size()
+    count_label.config(text=f"Items: {count}")
+
+def save_list():
+    with open("to-do-list-personal.txt", "w") as f:
+        for item in listbox.get(0, tk.END):
+            f.write(item + "\n")
+    status_label.config(text="List saved successfully.")
+
+def load_list():
+    if os.path.exists("to-do-list-personal.txt"):
+        with open("to-do-list-personal.txt") as f:
+            items = f.read().splitlines()
+            for item in items:
+                listbox.insert(tk.END, item)
+        update_list_count()
+        status_label.config(text="List loaded successfully.")
+    else:
+        status_label.config(text="No saved list found.")
+
+root = tk.Tk()
+root.title("To-Do List for Personal Purpose")
+
+title = tk.Label(root,text="To-Do List for Personal Purpose", font=("Helvetica", 16))
+title.pack()
+
+entry = tk.Entry(root)
+entry.pack()
+
+add_button = tk.Button(root, text="Add", command=add_item)
+add_button.pack()
+
+remove_button = tk.Button(root, text="Remove", command=remove_item)
+remove_button.pack()
+
+clear_button = tk.Button(root, text="Clear", command=clear_list)
+clear_button.pack()
+
+save_button = tk.Button(root, text="Save", command=save_list)
+save_button.pack()
+
+load_button = tk.Button(root, text="Load", command=load_list)
+load_button.pack()
+
+count_label = tk.Label(root, text="Items: 0")
+count_label.pack()
+
+status_label = tk.Label(root, text="")
+status_label.pack()
+
+listbox = tk.Listbox(root)
+listbox.pack()
+
+root.mainloop()
